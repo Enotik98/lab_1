@@ -4,46 +4,38 @@ using namespace std;
 template <typename T>
 class Tree {
 private:
+    template <typename U>
     class Node {
     public:
-        T idex;
-        T year;
-        T month;
-        T day;
-        T hour;
-        T minute;
-        T second;
+        int index;
+        U data;
+        U time;
         vector<Node*> Leaves;
-        Node(T year, T month, T day, T hour, T minute, T second);
+        Node(U data, U time);
     };
     int count;
-    Node *root;
+    Node<T> *root;
 public:
-    Tree(T year, T month, T day, T hour, T minute, T secoud);
-    ~Tree();
-    void deleteTree(Node* current);
-    Node* getRoot();
-    Node* deleteNode();
-    void outputTree(Node *current, int temp);
+    Tree<T>(T data, T time);
+    ~Tree<T>();
+    void deleteTree(Node<T>* current);
+    Node<T>* getRoot();
+    Node<T>* deleteNode();
+    void outputTree(Node<T> *current, int temp);
     
 };
 
 template <typename T>
-
-Tree<T>::Node::Node(T year, T month, T day, T hour, T minute, T second){
-    this->year = year;
-    this->month = month;
-    this->day = day;
-    this->hour = hour;
-    this->minute = minute;
-    this->second = second;
+template <typename U>
+Tree<T>::Node<U>::Node(U data, U time){
+    this->data = data;
 }
 template <typename T>
 Tree<T>::~Tree(){
     deleteTree(root);
 }
 template <typename T>
-void Tree<T>::deleteTree(Tree::Node* current){
+void Tree<T>::deleteTree(Tree::Node<T>* current){
     for(auto& leaves: current->Leaves){
         deleteTree(leaves);
     }
@@ -52,13 +44,14 @@ void Tree<T>::deleteTree(Tree::Node* current){
     
 }
 template <typename T>
-typename Tree<T>::Node* Tree<T>::getRoot(){
+typename Tree<T>::template Node<T>* Tree<T>::getRoot(){
     return root;
 }
 template <typename T>
-typename Tree<T>::Node* Tree<T>::deleteNode(){
-    Node* curr = root;
-    Node* prev = root;
+template <typename U>
+Tree<T>::Node<U>* Tree<T>::deleteNode(){
+    Node<U>* curr = root;
+    Node<U>* prev = root;
     int temp = -1 , dop;
     
     if (root->Leaves.empty()){
@@ -95,4 +88,7 @@ typename Tree<T>::Node* Tree<T>::deleteNode(){
         }
     }
 }
-
+template <typename T>
+void Tree<T>::outputTree(Node<T>* current, int temp){
+    cout << current->index << ": " << current << " date";
+}
