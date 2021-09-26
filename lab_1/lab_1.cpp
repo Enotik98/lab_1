@@ -1,15 +1,49 @@
-//
-//  main.cpp
-//  lab_1
-//
-//  Created by Оля on 9/26/21.
-//  Copyright © 2021 Оля. All rights reserved.
-//
-
 #include <iostream>
+#include <vector>
+using namespace std;
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
-    return 0;
+class Tree {
+private:
+    
+    class Node {
+    public:
+        int idex;
+        int year;
+        int month;
+        int day;
+        int hour;
+        int minute;
+        int second;
+        vector<Node*> Leaves;
+        Node(int year, int month, int day, int hour, int minute, int second);
+    };
+    int count;
+    Node *root;
+public:
+    Tree(int year, int month, int day, int hour, int minute, int secoud);
+    ~Tree();
+    void deleteTree(Node* current);
+    
+};
+
+Tree::Node::Node(int year, int month, int day, int hour, int minute, int second){
+    this->year = year;
+    this->month = month;
+    this->day = day;
+    this->hour = hour;
+    this->minute = minute;
+    this->second = second;
+}
+
+Tree::~Tree(){
+    deleteTree(root);
+}
+
+void Tree::deleteTree(Tree::Node* current){
+    for(auto& leaves: current->Leaves){
+        deleteTree(leaves);
+    }
+    cout << "Node" << current << "is deleted" << endl;
+    delete current;
+    
 }
