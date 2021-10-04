@@ -169,13 +169,24 @@ public:
     
     BinaryTree(U date, U time);
     ~BinaryTree();
+    //выводы
     void printUtil(Node* current, int space);
-    void deleteTree();
+    void outputUtil(Node* current, int space);
+    
+    
     Node* deleteNode();
     Node* getRoot();
+    Node* getParent(Node* current, Node* tree);
+    
     void setIndex(Node* current);
     void insert(U date, U index);
+    void deleteTree();
+    void serchNodeByValue(U date, U time);
+    void deleteNodeByValue(U date, U time);
     
+    bool checkEqual(Node* current, Node* newNode);
+    bool checkEqual(Node* current, U date, U time);
+    bool check2Nodes(Node* current, Node* newNode);
 };
 template<typename U>
 BinaryTree<U>::~BinaryTree(){
@@ -196,6 +207,17 @@ void BinaryTree<U>::printUtil(Node* current, int space){
     cout << current->date << " | "<<current->time<<"\n";
     printUtil(current->left, space);
 }
+template<typename U>
+void BinaryTree<U>::outputUtil(Node *current, int space){
+    if(root == NULL) return;
+    space += count;
+    outputUtil(root->right, space);
+    cout<<"\n";
+    for(int i = count; i < space;i++) cout <<" ";
+    cout << root->date<<" | "<<root->time<<endl;
+    outputUtil(root->left, space);
+}
+
 template<typename U>
 void BinaryTree<U>::deleteTree(){
     while(root != NULL){
@@ -265,11 +287,101 @@ void BinaryTree<U>::insert(U date, U time){
             }
         }else{
             if( (curr->left ==NULL) && (curr->right != NULL)){
-                cout<<"Chooose the Node we need ";
+                cout<<"Chooose the Node we need to go\n Left(new): "<<curr->left<<"\t"<<"Right(new): "<<curr->right<<endl;
+                cin >> tmp;
+                switch (tmp){
+                    case 1:
+                        curr->left = new Node(date, time);
+                        count ++;
+                        setIndex(curr->left);
+                        return ;
+                    case 2:
+                        curr->right = new Node(date, time);
+                        count ++;
+                        setIndex(curr->right);
+                        return;
+                        default:
+                        break;
+                }
             }
         }
     }
 }
+template<typename U>
+typename BinaryTree<U>::Node* BinaryTree<U>::getParent(Node* current, Node* tree){
+    Node* parent = getParent(current, tree);
+    if(!checkEqual(current, tree)){
+        if(check2Nodes(current, tree)){ //Если current меньше чем tree
+            Node *result = getParent(tree->left, tree);//Берем родителя для tree->left(рекурсино)
+            if(result) result;
+            return tree;
+        }else if(!check2Nodes(current, tree)){
+            Node* result = getParent(tree->right, current);
+            if(result) return result;
+            return tree;
+        }
+    }else return NULL;
+}
+template <typename U>
+bool BinaryTree<U>::checkEqual(Node *current, Node *newNode){
+    if(current->date == newNode->date){
+        if(current->time == newNode->time){
+            return true;
+        }else return false;
+    }else return false;
+}
+
+template <typename U>
+bool BinaryTree<U>::check2Nodes(Node *current, Node *newNode){
+    if(current->date <= newNode->date){
+        if(current->time <= newNode->time){
+            return true;
+        }else return false;
+    }else return false;
+}
+template <typename U>
+bool BinaryTree<U>::checkEqual(Node* current, U date, U time){
+    if(current->date == date){
+        if(current->time == time){
+            return true;
+        }else return false;
+    }else return false;
+}
+
+template <typename U>
+void BinaryTree<U>::serchNodeByValue(U date, U time){
+    Node* curr = root;
+    Node* prebv = root;
+    while (true) {
+        
+    }
+}
+template <typename U>
+void BinaryTree<U>::deleteNodeByValue(U date, U time){
+    Node* curr = root;
+    Node* parent = getParent(root, curr);
+    if(curr->left == NULL && curr->right == NULL){
+        if(checkEqual(curr, date, time)){
+            if(parent->left == curr){
+                parent->left = NULL;
+            }else{
+                parent->right = curr->right;
+                curr = parent->right;
+            }
+        }else{
+            if(parent->left == curr){
+                parent->left = curr->right;
+                curr = parent->right;
+            }else{
+                parent->right = curr->right;
+                curr = parent->right;
+            }
+        }
+    }else{
+        
+    }
+}
+
 int main(){
     Tree<int> tre(23, 45);
     tre.insert(56, 88);
