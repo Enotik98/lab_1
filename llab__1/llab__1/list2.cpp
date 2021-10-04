@@ -5,6 +5,7 @@ using namespace std;
 enum Month{
     January = 1, February, March, April, May, June, July, Augus, September, October, November, December,
 };
+int monthLenght[2][12] = {{0,31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334}, {0, 31, 60, 91, 121, 152, 182,213, 244, 274, 305, 335} };
 
 class Date{
     
@@ -18,7 +19,7 @@ public:
     virtual int getYear() ;
     virtual void setYear(int year);
     
-    //смещение на количество
+    //смещение и+ и- на количество
     virtual Date & addDays(int days = 1);
     virtual Date & subDays(int days = 1);
     virtual Date & addMonths(int months = 1);
@@ -54,6 +55,9 @@ public:
     Date & subMonths(int months = 1);
     Date & addYears(int years = 1);
     Date & subYears(int years = 1);
+    
+    long convert(int day, int month, int year);
+    void convertToDay(long days, int &day, int &month, int &year);
 };
 
 
@@ -207,10 +211,36 @@ void StructDate::getWday(int dat, int month, int year){
     cout <<day<<"."<<month<<"."<<year<<"--> "<<wday[kodwday];
     
 }
-
-
+//что б найти разницу используем функцию convert переводим дату в дни и берем разницу
+//так же делаем для доббавление
+//из даты в количество дней
+long StructDate::convert(int day, int month, int year){
+    int y = year - 1600;
+    long d = y*365 + y/4 - y/100 + y/400;
+    bool leap = IsLeapYear(year);
+    if(leap){
+        d --;
+    }
+    return d + monthLenght[leap][month] + day;
+}
+void StructDate::convertToDay(long days, int &day, int &month, int &year){
+    year = (int)(1600 + 4*days/(365*4 + 1)) + 1;
+    int diff = (int)(days - convert(1, January, year) + 1);
+    if(diff <= 0){
+        year --;
+        bool leap = IsLeapYear(year);
+        if (diff <= 0){
+            diff += 365 + leap;
+        }
+        for(month = January; month < December && diff > monthLenght[leap][month];month++);
+        day = diff - monthLenght[leap][month-1];
+    }
+}
 
 int main(){
+    
+    
+    
     return 0;
 }
 
