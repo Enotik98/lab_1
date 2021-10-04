@@ -172,6 +172,7 @@ public:
     //выводы
     void printUtil(Node* current, int space);
     void outputUtil(Node* current, int space);
+    void printNode(Node* current);
     
     
     Node* deleteNode();
@@ -184,6 +185,7 @@ public:
     void serchNodeByValue(U date, U time);
     void deleteNodeByValue(U date, U time);
     
+    bool checkValues(Node* current, U date, U time);
     bool checkEqual(Node* current, Node* newNode);
     bool checkEqual(Node* current, U date, U time);
     bool check2Nodes(Node* current, Node* newNode);
@@ -351,10 +353,39 @@ bool BinaryTree<U>::checkEqual(Node* current, U date, U time){
 template <typename U>
 void BinaryTree<U>::serchNodeByValue(U date, U time){
     Node* curr = root;
-    Node* prebv = root;
-    while (true) {
-        
+    while(true){
+        if(checkValues(curr, date, time)){
+            if(checkEqual(curr, date, time)){
+                printNode(curr);
+            }else{
+                if(curr->left != NULL){
+                    curr = curr->left;
+                }else{
+                    cout<<"Can't search nothing more"<<endl;
+                    return;
+                }
+            }
+        }else{
+            if(curr->right != NULL){
+                curr = curr->right;
+            }else{
+                cout<<"Can't search nothing more"<<endl;
+                return;
+            }
+        }
     }
+}
+template <typename U>
+bool BinaryTree<U>::checkValues(Node *current, U date, U time){
+    if(current->date >= date){
+        if(current->time >= time){
+            return true;
+        }else return false;
+    }else return false;
+}
+template<typename U>
+void BinaryTree<U>::printNode(Node *current){
+    cout<<current->index<<": "<<current->date<<" | "<<current->time<<"\n";
 }
 template <typename U>
 void BinaryTree<U>::deleteNodeByValue(U date, U time){
@@ -381,10 +412,305 @@ void BinaryTree<U>::deleteNodeByValue(U date, U time){
         
     }
 }
+//===================================================
+
+template <typename U>
+class BinarySearchTree{
+public:
+    class Node{
+    public:
+        int index;
+        U date;
+        U time;
+        Node* left;
+        Node* right;
+        Node(U date, U time);
+    };
+    Node* root;
+    int count;
+    
+    BinarySearchTree(U date, U time);
+    ~BinarySearchTree();
+    
+    void deleteTree();
+    void setIndex(Node* current);
+    void insert(U date, U time);
+    void searchNodeByValue(U date, U time);
+    void deleteNodeByValue(U date, U time);
+    
+    //вывод
+    void printNode(Node* current);
+    
+    bool checkValues(Node* current, U date, U time);
+    bool checkEqual(Node* current, U date, U time);
+    bool checkEqual(Node* current, Node* newNode);
+    bool check2Nodes(Node* current, Node* newNode);
+    
+    Node* getParent(Node* current, Node* tree);
+    Node* deleteNode();
+    
+};
+template <typename U>
+BinarySearchTree<U>::Node::Node(U date, U time){
+    this->date = date;
+    this->time = time;
+    left = right = NULL;
+}
+
+template <typename U>
+BinarySearchTree<U>::BinarySearchTree(U date, U time){
+    count = 1;
+    root = new Node(date, time);
+}
+template <typename U>
+BinarySearchTree<U>::~BinarySearchTree(){
+    deleteTree();
+}
+template <typename U>
+void BinarySearchTree<U>::deleteTree(){
+    while(root != NULL){
+        deleteNode();
+    }
+}
+template <typename U>
+typename BinarySearchTree<U>::Node* BinarySearchTree<U>:: deleteNode(){
+    Node* prev = root;
+    Node* curr = root;
+    if((root->left == NULL)&&(root->right ==NULL)){
+        root == NULL;
+        return NULL;
+    }
+    while(true){
+        if(((curr->left != NULL) && (curr->right == NULL)) || ((curr->left != NULL) && (curr->right != NULL))){
+            prev = curr;
+            curr = curr->left;
+        }else if((curr->left == NULL) && (curr->right != NULL)){
+            prev = curr;
+            curr = curr->right;
+        }else{
+            if (prev->left == curr){
+                prev->left = NULL;
+            }else {
+                prev->right = NULL;
+            }
+            curr = NULL;
+            return NULL;
+        }
+    }
+}
+
+template <typename U>
+void BinarySearchTree<U>::setIndex(Node* current){
+    current->index = count;
+}
+
+template <typename U>
+void BinarySearchTree<U>::insert(U date, U time){
+    Node* curr = root;
+    while(true){
+        if(checkValues(curr, date, time)){
+            if(curr->left != NULL){
+                curr = curr->left;
+            }else{
+                count++;
+                curr->left = new Node(date, time);
+                setIndex(curr->left);
+                return;
+            }
+        }
+    }
+}
+
+template <typename U>
+bool BinarySearchTree<U>::checkValues(Node *current, U date, U time){
+    if(current->date == date){
+        if(current->time == time){
+            return true;
+        }else return false;
+    }else return false;
+}
+template <typename U>
+bool BinarySearchTree<U>::checkEqual(Node *current, U date, U time){
+    if(current->date == date){
+        if(current->time == time){
+            return true;
+        }else return false;
+    }else return false;
+}
+template <typename U>
+void BinarySearchTree<U>::searchNodeByValue(U date, U time){
+    Node* curr = root;
+    while(true){
+        if(checkValues(curr, date, time)){
+            if(checkEqual(curr, date, time)){
+                printNode(curr);
+            }else{
+                if(curr->left != NULL){
+                    curr = curr->left;
+                }else{
+                    cout<<"Can't search nothing more"<<endl;
+                    return;
+                }
+            }
+        }else{
+            if(curr->right != NULL){
+                curr = curr->right;
+            }else{
+                cout<<"Can't search nothing more"<<endl;
+                return;
+            }
+        }
+    }
+}
+template <typename U>
+bool BinarySearchTree<U>::check2Nodes(Node* current, Node* newNode){
+    if(current->date <= newNode){
+        if(current->time <= newNode){
+            return true;
+        }else return false;
+    }else return false;
+}
+template <typename U>
+bool BinarySearchTree<U>::checkEqual(Node *current, Node *newNode){
+    if(current->date == newNode->date){
+        if(current->time == newNode->time){
+            return true;
+        }else return false;
+    }else return false;
+}
+template <typename U>
+void BinarySearchTree<U>::printNode(Node *current){
+    cout<<current->index<<": "<<current->date<<" | "<<current->time<<"\n";
+}
+template <typename U>
+typename BinarySearchTree<U>::Node* BinarySearchTree<U>::getParent(Node *current, Node *tree){
+    Node* parent = NULL;
+    if(!checkEqual(current, tree)){
+        if(check2Nodes(current, tree)){
+            parent = getParent(tree->left, current);
+            if(parent){
+                return parent;
+            }
+            return tree;
+        }else{
+            if(!check2Nodes(current, tree)){
+                parent = getParent(tree->right, current);
+                if(parent){
+                    return parent;
+                }
+                return tree;
+            }
+           }
+    }else{
+        return NULL;
+    }
+}
+template <typename U>
+void BinarySearchTree<U>::deleteNodeByValue(U date, U time){
+    Node* curr = root;
+    Node* parent = getParent(root, curr);
+    //Смотрим если потомки отсуствуют
+    if(curr->left == NULL && curr->right == NULL){
+        if(!checkEqual(curr, date, time)){
+            return;
+        }else{
+            if(parent->left == curr){
+                parent->left = NULL;
+                return;
+            }else if(parent->right == curr){
+                parent->right = NULL;
+                return;
+            }
+        }
+    }else{
+        //Если 1 потомок
+        if (curr->left == NULL || curr->right == NULL){
+            if(checkEqual(curr, date, time)){
+                if(curr->left == NULL){
+                    if(parent->left == NULL){
+                        parent->left = curr->right;
+                    }else{
+                        parent->right = curr->right;
+                    }
+                }else{
+                    if(parent->left == curr){
+                        parent->left = curr->left;
+                    }else
+                        parent->right = curr->left;
+                }
+            }else{
+                if(curr->left == NULL){
+                    if(!checkValues(curr, date, time)){
+                        curr = curr->right;
+                    }else{
+                        return;
+                    }
+                }else{
+                    if(curr->right == NULL){
+                        if(checkValues(curr, date, time)){
+                            curr = curr->left;
+                        }else {
+                            return;
+                        }
+                    }
+                }
+            }
+        }else{
+            //Если 2 потомка
+            while(true){
+                parent = getParent(root, curr);
+                Node* tmp = curr->left;
+                if(parent != NULL){
+                    if((curr->left == NULL && curr->right == NULL) && (!checkEqual(curr, date, time))){
+                        return;
+                    }else{
+                        if(checkEqual(curr, date, time)){
+                            if(parent->left == curr){
+                                parent->left = tmp;
+                            }else{
+                                parent->right = tmp;
+                            }
+                            while(tmp->right){
+                                tmp = tmp->right;
+                            }
+                            tmp->right = curr->right;
+                            curr = tmp;
+                        }else{
+                            if(!checkEqual(curr, date, time)){
+                                if(curr->left != NULL && curr->right != NULL){
+                                    if(checkValues(curr, date, time)){
+                                        curr = curr->right;
+                                    }else{
+                                        curr = curr->left;
+                                    }
+                                }else{
+                                    if(curr->left != NULL){
+                                        curr = curr->left;
+                                    }else{
+                                        curr = curr->right;
+                                    }
+                                }
+                            }else{
+                                if(!checkEqual(curr, date, time)){
+                                    if(checkValues(curr, date, time)&& curr->left != NULL){
+                                        curr = curr->left;
+                                    }else{
+                                        if(!checkValues(curr, date, time) && curr->right != NULL){
+                                            curr = curr->right;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 int main(){
-    Tree<int> tre(23, 45);
-    tre.insert(56, 88);
     
     
     return 0;
